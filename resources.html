@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14213d">
+<title>Довідник · Доброчесна Поліція</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#14213d;--cream:#f4f0e6;--gold:#e5b347;--ink:#202024;--muted:#6b6456;--line:rgba(20,33,61,.12)}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{background:var(--cream);color:var(--ink);font-family:"Fraunces",Georgia,serif;
+    min-height:100dvh;padding:env(safe-area-inset-top) 0 calc(env(safe-area-inset-bottom) + 30px)}
+  .bar{position:sticky;top:0;z-index:10;background:var(--navy);color:var(--cream);
+    padding:calc(env(safe-area-inset-top) + 16px) 18px 16px;display:flex;align-items:center;gap:12px;
+    border-bottom:3px solid var(--gold)}
+  .bar a.back{color:var(--gold);text-decoration:none;font-family:"JetBrains Mono",monospace;font-size:22px}
+  .bar h1{font-size:17px;font-weight:900}
+  main{padding:22px 18px;max-width:560px;margin:0 auto}
+  h2{font-family:"JetBrains Mono",monospace;font-size:11px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.16em;color:var(--muted);margin:26px 0 10px}
+  .item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:10px}
+  .item .q{font-size:17px;font-weight:600;color:var(--navy);margin-bottom:5px}
+  .item .a{font-size:14.5px;line-height:1.5;color:var(--ink)}
+  .item .a code{font-family:"JetBrains Mono",monospace;font-size:13px;background:var(--cream);
+    padding:1px 6px;border-radius:5px;color:var(--navy)}
+  .note{font-size:12.5px;line-height:1.5;color:var(--muted);font-style:italic;
+    border-left:3px solid var(--gold);padding:8px 0 8px 14px;margin:18px 0}
+</style>
+</head>
+<body>
+<header class="bar"><a class="back" href="index.html">←</a><h1>Довідник доброчесності</h1></header>
+<main>
+  <p class="note">Орієнтовний офлайн-довідник. Перед застосуванням обов'язково звіряйте актуальні редакції норм із офіційними джерелами (zakon.rada.gov.ua, НАЗК).</p>
+
+  <h2>Подання декларацій</h2>
+  <div class="item">
+    <div class="q">Хто подає щорічну декларацію?</div>
+    <div class="a">Суб'єкти декларування, визначені Законом «Про запобігання корупції». Щорічна декларація подається до 1 квітня за попередній рік через портал НАЗК.</div>
+  </div>
+  <div class="item">
+    <div class="q">Види декларацій</div>
+    <div class="a">Щорічна, перед звільненням, після звільнення (наступного року), кандидата на посаду.</div>
+  </div>
+
+  <h2>Відповідальність</h2>
+  <div class="item">
+    <div class="q">Декларування недостовірної інформації</div>
+    <div class="a">Кримінальна — <code>ст. 366-2 КК</code>; адміністративна (несвоєчасне подання тощо) — <code>ст. 172-6 КУпАП</code>. Пороги значущості визначаються в прожиткових мінімумах на відповідний рік.</div>
+  </div>
+  <div class="item">
+    <div class="q">Незаконне збагачення</div>
+    <div class="a"><code>ст. 368-5 КК</code> — за наявності встановленого порогу різниці між активами та законними доходами.</div>
+  </div>
+
+  <h2>Канали повідомлень</h2>
+  <div class="item">
+    <div class="q">Викривачам</div>
+    <div class="a">Єдиний портал повідомлень викривачів (ЄППВ) забезпечує конфіденційність. Внутрішні та регулярні канали діють у підрозділах НПУ.</div>
+  </div>
+
+  <p class="note">Цей розділ працює без підключення до мережі. Для повної версії та оновлень відкрийте офіційний сайт у режимі онлайн.</p>
+</main>
+</body>
+</html>

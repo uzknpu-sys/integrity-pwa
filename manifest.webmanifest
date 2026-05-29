@@ -1,0 +1,32 @@
+{
+  "name": "Доброчесна Поліція",
+  "short_name": "Доброчесність",
+  "description": "Застосунок Уповноваженого підрозділу з питань запобігання корупції НПУ — доступ до ключових ресурсів офлайн.",
+  "lang": "uk",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#14213d",
+  "theme_color": "#14213d",
+  "categories": ["government", "education", "productivity"],
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "./icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Програма «Архітектори Змін»",
+      "short_name": "Архітектори",
+      "url": "https://www.integrity-police.pp.ua/arkhitektory_zmin"
+    },
+    {
+      "name": "Офіційний сайт",
+      "short_name": "Сайт",
+      "url": "https://www.integrity-police.pp.ua/"
+    }
+  ]
+}
