@@ -169,7 +169,7 @@
     try {
       const perm = await Notification.requestPermission();
       if (perm !== 'granted') { showMsg('Дозвіл не надано'); return; }
-      const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+      const reg = await navigator.serviceWorker.register('sw.js');
       const token = await messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
       if (token) {
         nbtn.style.display='none';
