@@ -1,25 +1,9 @@
-/* Service Worker — Доброчесна Поліція PWA
-   Об'єднує офлайн-кешування та Firebase Cloud Messaging. */
-
-importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
-
-// === ЗАМІНІТЬ на свої значення з Firebase Console ===
-firebase.initializeApp({
-	  apiKey: "AIzaSyDpXzfNgLhX79gF-db3JKZmedxh98C0ih4",
-	  authDomain: "integrity-police-app.firebaseapp.com",
-	  projectId: "integrity-police-app",
-	  storageBucket: "integrity-police-app.firebasestorage.app",
-	  messagingSenderId: "710211684160",
-	  appId: "1:710211684160:web:d18e7d8ee3930be3539ca5"
-});
-const messaging = firebase.messaging();
-// ====================================================
-
-const CACHE = 'integrity-v1';
+/* Service Worker — Доброчесна Поліція PWA */
+const CACHE = 'integrity-v2';
 const ASSETS = [
   './',
   './index.html',
+  './guide.html',
   './resources.html',
   './manifest.webmanifest',
   './icons/icon-192.png',
@@ -71,16 +55,20 @@ self.addEventListener('fetch', e => {
   );
 });
 
-/* ---- Push notifications via FCM ---- */
-messaging.onBackgroundMessage(payload => {
-  const title = (payload.notification && payload.notification.title) || 'Доброчесна Поліція';
-  const options = {
-    body: (payload.notification && payload.notification.body) || '',
-    icon: './icons/icon-192.png',
-    badge: './icons/favicon-64.png',
-    data: { url: (payload.data && payload.data.url) || './' }
-  };
-  self.registration.showNotification(title, options);
+/* ---- Push notifications ----
+   Receives a push payload and shows a notification.
+   Requires a push service + VAPID keys on your server to actually send. */
+self.addEventListener('push', e => {
+  let data = { title: 'Доброчесна Поліція', body: 'Нове сповіщення', url: './' };
+  try { if (e.data) data = Object.assign(data, e.data.json()); } catch (_) {}
+  e.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: './icons/icon-192.png',
+      badge: './icons/favicon-64.png',
+      data: { url: data.url }
+    })
+  );
 });
 
 self.addEventListener('notificationclick', e => {

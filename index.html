@@ -84,9 +84,9 @@
 
   <h2>Офлайн-доступ</h2>
   <div class="grid">
-    <a class="card" href="resources.html">
-      <div class="t">Довідник доброчесності <span class="arr">→</span></div>
-      <div class="d">Ключові норми, пороги відповідальності та контакти — без мережі.</div>
+    <a class="card" href="guide.html">
+      <div class="t">Довідник стандартів доброчесності <span class="arr">→</span></div>
+      <div class="d">11 тем, 40 ситуаційних задач, тести й дилеми. Працює без мережі; відео — за наявності інтернету.</div>
     </a>
   </div>
 
@@ -135,15 +135,14 @@
 <script>
   // === ЗАМІНІТЬ на свої значення з Firebase Console ===
   const firebaseConfig = {
-	  apiKey: "AIzaSyDpXzfNgLhX79gF-db3JKZmedxh98C0ih4",
-	  authDomain: "integrity-police-app.firebaseapp.com",
-	  projectId: "integrity-police-app",
-	  storageBucket: "integrity-police-app.firebasestorage.app",
-	  messagingSenderId: "710211684160",
-	  appId: "1:710211684160:web:d18e7d8ee3930be3539ca5"
-
+    apiKey: "ЗАМІНІТЬ_apiKey",
+    authDomain: "ЗАМІНІТЬ_authDomain",
+    projectId: "ЗАМІНІТЬ_projectId",
+    storageBucket: "ЗАМІНІТЬ_storageBucket",
+    messagingSenderId: "ЗАМІНІТЬ_messagingSenderId",
+    appId: "ЗАМІНІТЬ_appId"
   };
-  const VAPID_KEY = "BJN7ykfX3QhbbuodEwQ3gl4J9qLadIuU2kB8RkO7goGOfujO0lKhaWcfcKDAh6jo7O4SRUv07ivpBJd0g8OlUWw";
+  const VAPID_KEY = "ЗАМІНІТЬ_публічний_VAPID_ключ";
   // ====================================================
 
   const nbtn = document.getElementById('notify');
@@ -169,7 +168,7 @@
     try {
       const perm = await Notification.requestPermission();
       if (perm !== 'granted') { showMsg('Дозвіл не надано'); return; }
-      const reg = await navigator.serviceWorker.register('sw.js');
+      const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
       const token = await messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
       if (token) {
         nbtn.style.display='none';
