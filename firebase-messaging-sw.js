@@ -6,12 +6,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "ЗАМІНІТЬ_apiKey",
-  authDomain: "ЗАМІНІТЬ_authDomain",
-  projectId: "ЗАМІНІТЬ_projectId",
-  storageBucket: "ЗАМІНІТЬ_storageBucket",
-  messagingSenderId: "ЗАМІНІТЬ_messagingSenderId",
-  appId: "ЗАМІНІТЬ_appId"
+	  apiKey: "AIzaSyDpXzfNgLhX79gF-db3JKZmedxh98C0ih4",
+	  authDomain: "integrity-police-app.firebaseapp.com",
+	  projectId: "integrity-police-app",
+	  storageBucket: "integrity-police-app.firebasestorage.app",
+	  messagingSenderId: "710211684160",
+	  appId: "1:710211684160:web:d18e7d8ee3930be3539ca5"
 });
 
 const messaging = firebase.messaging();
