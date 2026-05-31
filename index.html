@@ -82,6 +82,19 @@
   <button id="notify" class="notifybtn" style="display:block;width:100%;margin:24px 0 8px;padding:16px;border:none;border-radius:14px;font-family:'Fraunces';font-size:16px;font-weight:900;cursor:pointer;background:var(--navy);color:var(--cream)">🔔 Увімкнути сповіщення</button>
   <p id="notifyMsg" style="display:none;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:0 0 8px;text-align:center"></p>
 
+  <!-- Діагностична панель -->
+  <details id="diag" style="margin:0 0 18px;border:1px solid var(--line);border-radius:12px;background:#fff;font-family:'JetBrains Mono',monospace;font-size:11px">
+    <summary style="padding:10px 14px;cursor:pointer;color:var(--navy);font-weight:600">🔧 Діагностика сповіщень</summary>
+    <div style="padding:0 14px 14px;line-height:1.6">
+      <div id="d_perm">Дозвіл: —</div>
+      <div id="d_sw">Service worker: —</div>
+      <div id="d_fb">Firebase: —</div>
+      <div id="d_token" style="word-break:break-all;margin-top:6px">Токен: —</div>
+      <button id="d_copy" style="display:none;margin-top:10px;width:100%;padding:10px;border:none;border-radius:8px;background:var(--gold);color:var(--navy);font-weight:700;cursor:pointer">📋 Копіювати токен</button>
+      <button id="d_get" style="margin-top:8px;width:100%;padding:10px;border:1px solid var(--navy);border-radius:8px;background:#fff;color:var(--navy);font-weight:700;cursor:pointer">🔄 Отримати/оновити токен</button>
+    </div>
+  </details>
+
   <h2>Офлайн-доступ</h2>
   <div class="grid">
     <a class="card" href="guide.html">
@@ -142,7 +155,7 @@
     messagingSenderId: "710211684160",
     appId: "1:710211684160:web:d18e7d8ee3930be3539ca5"
   };
-  const VAPID_KEY = "BBRV__Xhy_Wc1DxsT2aRPwKxDb23Lzlz82BnqSJoeMnqdGABQ5WFQeu4UZYVXKh7dXKcysUooK_7LwmjYrQ5jHs";
+  const VAPID_KEY = "BJN7ykfX3QhbbuodEwQ3gl4J9qLadluU2kB8RkO7goGOfujOOlKhaWcfcKDAh6jo7O4SRUvO7ivpBJdOg8OlUWw";
   // ====================================================
 
   const nbtn = document.getElementById('notify');
@@ -210,6 +223,46 @@
       });
     }
   } catch(e){ /* ignore */ }
+
+  // ===== Діагностика =====
+  const dPerm=document.getElementById('d_perm'),dSw=document.getElementById('d_sw'),
+        dFb=document.getElementById('d_fb'),dToken=document.getElementById('d_token'),
+        dCopy=document.getElementById('d_copy'),dGet=document.getElementById('d_get');
+  let lastToken='';
+
+  function refreshDiag(){
+    dPerm.textContent='Дозвіл: '+(('Notification' in window)?Notification.permission:'не підтримується');
+    dSw.textContent='Service worker: '+(('serviceWorker' in navigator)?'підтримується':'ні');
+    dFb.textContent='Firebase: '+(initFirebase()?'ініціалізовано':'помилка');
+  }
+  refreshDiag();
+
+  navigator.serviceWorker?.getRegistration().then(r=>{
+    dSw.textContent='Service worker: '+(r?('активний ('+(r.active?'running':'pending')+')'):'не зареєстровано');
+  });
+
+  async function getToken(){
+    dToken.textContent='Токен: отримую...';
+    if(!('Notification' in window)){dToken.textContent='Токен: відкрийте з ярлика на головному екрані';return;}
+    if(!initFirebase()){dToken.textContent='Токен: Firebase не ініціалізовано';return;}
+    try{
+      const perm=await Notification.requestPermission();
+      if(perm!=='granted'){dToken.textContent='Токен: дозвіл не надано ('+perm+')';return;}
+      const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js');
+      await navigator.serviceWorker.ready;
+      const t=await messaging.getToken({vapidKey:VAPID_KEY,serviceWorkerRegistration:reg});
+      if(t){lastToken=t;dToken.textContent='Токен: '+t;dCopy.style.display='block';}
+      else{dToken.textContent='Токен: порожній — не отримано';}
+    }catch(e){dToken.textContent='Токен ПОМИЛКА: '+e.message;}
+    refreshDiag();
+  }
+  dGet.addEventListener('click',getToken);
+  dCopy.addEventListener('click',()=>{
+    if(!lastToken)return;
+    navigator.clipboard?.writeText(lastToken).then(()=>{dCopy.textContent='✓ Скопійовано';
+      setTimeout(()=>dCopy.textContent='📋 Копіювати токен',1500);})
+      .catch(()=>{dToken.textContent='Виділіть і скопіюйте вручну:\n'+lastToken;});
+  });
 </script>
 </body>
 </html>
