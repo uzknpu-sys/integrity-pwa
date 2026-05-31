@@ -79,7 +79,7 @@
   <p class="lede">Швидкий доступ до ключових ресурсів <b>Уповноваженого підрозділу</b> з питань запобігання корупції. Основні матеріали доступні <b>офлайн</b>.</p>
 
   <button id="install" class="install">⤓ Встановити застосунок</button>
-  <button id="notify" class="install" style="background:var(--navy);color:var(--cream)">🔔 Увімкнути сповіщення</button>
+  <button id="notify" class="notifybtn" style="display:block;width:100%;margin:24px 0 8px;padding:16px;border:none;border-radius:14px;font-family:'Fraunces';font-size:16px;font-weight:900;cursor:pointer;background:var(--navy);color:var(--cream)">🔔 Увімкнути сповіщення</button>
   <p id="notifyMsg" style="display:none;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin:0 0 8px;text-align:center"></p>
 
   <h2>Офлайн-доступ</h2>
@@ -149,33 +149,51 @@
   const nmsg = document.getElementById('notifyMsg');
   function showMsg(t){nmsg.textContent=t;nmsg.style.display='block';}
 
-  // показуємо кнопку лише якщо браузер підтримує push
-  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+  // кнопка завжди видима; підтримку перевіряємо при кліку (надійніше для iOS)
+  nbtn.style.display = 'block';
+  if (('Notification' in window) && Notification.permission === 'granted') {
     nbtn.style.display='none';
-  } else if (Notification.permission === 'granted') {
-    nbtn.style.display='none';
-    showMsg('✓ Сповіщення увімкнено');
+    showMsg('✓ Сповіщення вже увімкнено');
   }
 
   let messaging = null;
-  try {
-    firebase.initializeApp(firebaseConfig);
-    messaging = firebase.messaging();
-  } catch (e) { /* config ще не заповнено */ }
+  function initFirebase(){
+    if (messaging) return true;
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+      messaging = firebase.messaging();
+      return true;
+    } catch (e) { console.error('Firebase init:', e); return false; }
+  }
 
   nbtn.addEventListener('click', async () => {
-    if (!messaging) { showMsg('Спершу заповніть firebaseConfig'); return; }
+    // 1. перевірка підтримки
+    if (!('Notification' in window)) {
+      showMsg('Цей застосунок треба відкрити з ярлика на головному екрані (не з Safari).');
+      return;
+    }
+    if (!('serviceWorker' in navigator)) {
+      showMsg('Браузер не підтримує сповіщення.');
+      return;
+    }
+    // 2. ініціалізація Firebase
+    if (!initFirebase()) {
+      showMsg('Firebase не завантажився. Перевірте інтернет і спробуйте ще раз.');
+      return;
+    }
+    // 3. запит дозволу + токен
     try {
       const perm = await Notification.requestPermission();
-      if (perm !== 'granted') { showMsg('Дозвіл не надано'); return; }
+      if (perm !== 'granted') { showMsg('Дозвіл на сповіщення не надано. Увімкніть у Налаштуваннях iPhone.'); return; }
       const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js');
+      await navigator.serviceWorker.ready;
       const token = await messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
       if (token) {
         nbtn.style.display='none';
         showMsg('✓ Сповіщення увімкнено');
-        console.log('FCM token:', token); // для діагностики
+        console.log('FCM token:', token);
       } else {
-        showMsg('Не вдалося отримати токен');
+        showMsg('Не вдалося отримати токен. Спробуйте ще раз.');
       }
     } catch (err) {
       console.error(err);
@@ -184,12 +202,14 @@
   });
 
   // повідомлення, коли застосунок відкрито
-  if (messaging) {
-    messaging.onMessage(payload => {
-      const n = payload.notification || {};
-      showMsg('🔔 ' + (n.title || 'Нове сповіщення'));
-    });
-  }
+  try {
+    if (initFirebase()) {
+      messaging.onMessage(payload => {
+        const n = payload.notification || {};
+        showMsg('🔔 ' + (n.title || 'Нове сповіщення'));
+      });
+    }
+  } catch(e){ /* ignore */ }
 </script>
 </body>
 </html>
