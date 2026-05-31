@@ -1,5 +1,5 @@
 /* Service Worker — Доброчесна Поліція PWA */
-const CACHE = 'integrity-v2';
+const CACHE = 'integrity-v3';
 const ASSETS = [
   './',
   './index.html',
