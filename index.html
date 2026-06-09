@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a1628">
+<title>Доброчесна Поліція</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Доброчесність">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f6fb; --surface:#ffffff; --surface-2:#eef2f9;
+    --ink:#0f1b2d; --ink-soft:#5a6b82; --line:rgba(15,27,45,.10);
+    --brand:#1466ff; --brand-2:#00c2c7; --gold:#e5b347;
+    --grad:linear-gradient(135deg,#1466ff,#00c2c7);
+    --shadow:0 8px 30px rgba(15,27,45,.10);
+    --nav-h:72px;
+  }
+  [data-theme="dark"]{
+    --bg:#0a1628; --surface:#0f1f38; --surface-2:#14233f;
+    --ink:#eaf1ff; --ink-soft:#8aa0c0; --line:rgba(255,255,255,.10);
+    --brand:#2e7bff; --brand-2:#22d3d8; --gold:#e5b347;
+    --grad:linear-gradient(135deg,#2e7bff,#22d3d8);
+    --shadow:0 10px 36px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--bg);color:var(--ink);font-family:'Manrope',sans-serif;
+    transition:background .35s,color .35s}
+  body{min-height:100dvh;overflow-x:hidden}
+
+  /* ── Декоративний фон з «нейромережею» ── */
+  .neural{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background:radial-gradient(120% 80% at 90% -10%,rgba(0,194,199,.10),transparent 60%),
+               radial-gradient(100% 60% at -10% 0%,rgba(20,102,255,.12),transparent 55%)}
+
+  .screen-wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;
+    padding:calc(env(safe-area-inset-top) + 16px) 18px calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px)}
+
+  /* ── Шапка ── */
+  .top{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+  .logo{width:44px;height:44px;flex:0 0 44px;border-radius:12px;display:grid;place-items:center;
+    background:var(--grad);box-shadow:0 6px 18px rgba(20,102,255,.4)}
+  .logo svg{width:26px;height:26px}
+  .top h1{font-family:'Sora';font-size:19px;font-weight:800;letter-spacing:-.02em}
+  .top .sub{font-family:'JetBrains Mono';font-size:10px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--brand-2);margin-top:1px}
+  .top .spacer{flex:1}
+  .icon-btn{width:42px;height:42px;border-radius:11px;border:1px solid var(--line);
+    background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--ink);
+    font-size:18px;transition:transform .15s}
+  .icon-btn:active{transform:scale(.92)}
+
+  /* ── Екрани ── */
+  .screen{display:none;animation:fade .35s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .hero{font-family:'Sora';font-size:30px;font-weight:800;line-height:1.1;
+    letter-spacing:-.03em;margin:18px 0 6px}
+  .hero .ai{background:var(--grad);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent}
+  .lede{font-size:15px;line-height:1.5;color:var(--ink-soft);margin-bottom:22px}
+  h2.sec{font-family:'JetBrains Mono';font-size:11px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.16em;color:var(--ink-soft);margin:26px 0 12px}
+
+  /* ── Картки ── */
+  .card{display:block;text-decoration:none;color:inherit;background:var(--surface);
+    border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:13px;
+    box-shadow:var(--shadow);transition:transform .15s;position:relative;overflow:hidden}
+  .card:active{transform:scale(.985)}
+  .card .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;
+    font-size:22px;margin-bottom:12px;background:var(--surface-2)}
+  .card .t{font-family:'Sora';font-size:18px;font-weight:700;margin-bottom:5px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .card .d{font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+  .card .arr{color:var(--brand-2);font-size:18px}
+  .card.online::after{content:'online';position:absolute;top:14px;right:16px;
+    font-family:'JetBrains Mono';font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);opacity:.55}
+  .tile-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .tile-row .card{margin-bottom:0}
+
+  /* ── Нижня навігація ── */
+  nav.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:20;height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+    padding-bottom:env(safe-area-inset-bottom);background:var(--surface);
+    border-top:1px solid var(--line);display:flex;backdrop-filter:blur(12px);
+    box-shadow:0 -6px 24px rgba(15,27,45,.08)}
+  nav.tabbar button{flex:1;background:none;border:none;cursor:pointer;color:var(--ink-soft);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    font-family:'Manrope';font-size:10px;font-weight:600;transition:color .2s}
+  nav.tabbar button svg{width:24px;height:24px}
+  nav.tabbar button.active{color:var(--brand)}
+  nav.tabbar button.active svg{stroke:var(--brand)}
+
+  /* ── Кнопки ── */
+  .btn{display:block;width:100%;padding:15px;border:none;border-radius:14px;cursor:pointer;
+    font-family:'Sora';font-size:15px;font-weight:700;background:var(--grad);color:#fff;
+    box-shadow:0 8px 22px rgba(20,102,255,.35);transition:transform .15s}
+  .btn:active{transform:scale(.98)}
+  .btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .field{width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:13px;
+    background:var(--surface);color:var(--ink);font-family:'Manrope';font-size:15px;margin-bottom:12px}
+  .field:focus{outline:2px solid var(--brand);border-color:transparent}
+
+  /* ── Бейдж/статус ── */
+  .status{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono';
+    font-size:11px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);margin-bottom:18px}
+  .status .dot{width:8px;height:8px;border-radius:50%;background:#2a8c46}
+  .status.ok{background:rgba(34,120,60,.12);color:#1d6b34}
+  [data-theme="dark"] .status.ok{color:#5fd17e}
+
+  /* ── Замок (gate) ── */
+  .gate{text-align:center;padding:60px 24px}
+  .gate .big{font-family:'Sora';font-size:22px;font-weight:800;margin:14px 0 8px}
+  .gate p{color:var(--ink-soft);font-size:14px;line-height:1.5;margin-bottom:22px}
+
+  /* ── AI обличчя (декор) ── */
+  .ai-face{position:absolute;right:-30px;top:-20px;width:180px;height:180px;opacity:.22;
+    pointer-events:none}
+  .msg{font-family:'JetBrains Mono';font-size:12px;color:var(--ink-soft);text-align:center;
+    margin-top:10px;min-height:18px}
+  .soon{display:inline-block;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);
+    padding:4px 10px;border-radius:999px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="neural"></div>
+
+<!-- ============ ЕКРАН ВХОДУ / РЕЄСТРАЦІЇ ============ -->
+<div id="authScreen" class="screen-wrap" style="display:none">
+  <div class="top">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M3 3h18v10l-9 8-9-8V3z" fill="#fff" opacity=".95"/><path d="M7.5 11l3 3 6-6" stroke="#1466ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div><h1>Доброчесна Поліція</h1><div class="sub">УЗК · НПУ</div></div>
+    <div class="spacer"></div>
+    <button class="icon-btn" id="themeBtnAuth" aria-label="Тема">🌙</button>
+  </div>
+
+  <h2 class="hero" style="margin-top:40px">Вхід до <span class="ai">застосунку</span></h2>
+  <p class="lede">Зареєструйтесь, щоб отримати доступ до матеріалів, новин і сповіщень.</p>
+
+  <div id="tabLogin">
+    <input class="field" id="loginUser" placeholder="Логін" autocomplete="username">
+    <input class="field" id="loginPass" type="password" placeholder="Пароль" autocomplete="current-password">
+    <button class="btn" id="doLogin">Увійти</button>
+    <p class="msg" id="authMsg"></p>
+    <button class="btn ghost" id="toRegister" style="margin-top:10px">Створити акаунт</button>
+  </div>
+
+  <div id="tabRegister" style="display:none">
+    <input class="field" id="regName" placeholder="Ім'я користувача" autocomplete="name">
+    <input class="field" id="regUser" placeholder="Логін" autocomplete="username">
+    <input class="field" id="regPass" type="password" placeholder="Пароль (мін. 6 символів)" autocomplete="new-password">
+    <button class="btn" id="doRegister">Зареєструватися</button>
+    <p class="msg" id="regMsg"></p>
+    <button class="btn ghost" id="toLogin" style="margin-top:10px">Уже маю акаунт</button>
+  </div>
+</div>
+
+<!-- ============ ОСНОВНИЙ ЗАСТОСУНОК ============ -->
+<div id="appScreen" style="display:none">
+  <div class="screen-wrap">
+    <div class="top">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M3 3h18v10l-9 8-9-8V3z" fill="#fff" opacity=".95"/><path d="M7.5 11l3 3 6-6" stroke="#1466ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <div><h1>Доброчесна Поліція</h1><div class="sub">УЗК · НПУ</div></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="themeBtn" aria-label="Тема">🌙</button>
+    </div>
+
+    <!-- ── Вкладка: Головна ── -->
+    <section class="screen active" data-tab="home">
+      <h2 class="hero">Вітаю, <span class="ai" id="helloName">користувачу</span>!</h2>
+      <p class="lede">Швидкий доступ до ключових ресурсів Уповноваженого підрозділу з питань запобігання корупції.</p>
+      <span class="status ok"><span class="dot"></span>Акаунт активний</span>
+
+      <h2 class="sec">Розділи</h2>
+      <a class="card" onclick="go('materials')">
+        <div class="ic">📘</div>
+        <div class="t">Матеріали <span class="arr">→</span></div>
+        <div class="d">Довідник стандартів доброчесності — 11 тем, 40 задач, тести. Офлайн.</div>
+      </a>
+      <div class="tile-row">
+        <a class="card" onclick="go('ai')">
+          <div class="ic">🧠</div>
+          <div class="t">AI-помічник</div>
+          <div class="d">Питання з етики й доброчесності.</div>
+        </a>
+        <a class="card" onclick="go('news')">
+          <div class="ic">📰</div>
+          <div class="t">Новини</div>
+          <div class="d">Актуальні події та оновлення.</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ── Вкладка: Матеріали ── -->
+    <section class="screen" data-tab="materials">
+      <h2 class="hero">Матеріали</h2>
+      <p class="lede">Навчальні та довідкові ресурси доброчесності.</p>
+
+      <a class="card" href="guide.html">
+        <div class="ic">📘</div>
+        <div class="t">Довідник стандартів <span class="arr">→</span></div>
+        <div class="d">11 тем, 40 ситуаційних задач, тести й дилеми. Працює офлайн.</div>
+      </a>
+      <a class="card online" href="https://www.youtube.com/playlist?list=PLLdjRuX7U6DPywID-s1Az_RljtZTW-99J" target="_blank" rel="noopener">
+        <div class="ic">🎬</div>
+        <div class="t">Відео <span class="arr">→</span></div>
+        <div class="d">Плейлист відеороз'яснень на YouTube.</div>
+      </a>
+      <div id="videoList"></div>
+      <a class="card online" href="https://www.integrity-police.pp.ua/Integrity-Quest" target="_blank" rel="noopener">
+        <div class="ic">🎮</div>
+        <div class="t">Етичні дилеми — Integrity Quest <span class="arr">→</span></div>
+        <div class="d">Інтерактивний тренажер етичних ситуацій.</div>
+      </a>
+      <a class="card online" href="https://www.integrity-police.pp.ua/interactiv" target="_blank" rel="noopener">
+        <div class="ic">🏗️</div>
+        <div class="t">Курс «Розбудова доброчесності» <span class="arr">→</span></div>
+        <div class="d">Інтерактивний навчальний курс.</div>
+      </a>
+    </section>
+
+    <!-- ── Вкладка: AI ── -->
+    <section class="screen" data-tab="ai" style="position:relative">
+      <svg class="ai-face" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="40" stroke="var(--brand-2)" stroke-width=".5"/><circle cx="50" cy="50" r="28" stroke="var(--brand)" stroke-width=".5"/><circle cx="50" cy="30" r="2" fill="var(--brand-2)"/><circle cx="68" cy="55" r="2" fill="var(--brand)"/><circle cx="35" cy="60" r="2" fill="var(--brand-2)"/></svg>
+      <h2 class="hero">AI-<span class="ai">помічник</span></h2>
+      <p class="lede">Ваш цифровий помічник з питань доброчесності та професійної етики.</p>
+      <div class="card" style="text-align:center;padding:34px 22px">
+        <div class="ic" style="margin:0 auto 14px">🤖</div>
+        <div class="t" style="justify-content:center">Скоро</div>
+        <div class="d">AI-помічник на основі Gemini готується до запуску. Він відповідатиме на запитання з опорою на базу знань.</div>
+        <span class="soon">в розробці</span>
+      </div>
+    </section>
+
+    <!-- ── Вкладка: Новини ── -->
+    <section class="screen" data-tab="news">
+      <h2 class="hero">Новини</h2>
+      <p class="lede">Будьте в курсі важливого.</p>
+      <div id="newsList"></div>
+    </section>
+
+    <!-- ── Вкладка: Профіль ── -->
+    <section class="screen" data-tab="profile">
+      <h2 class="hero">Профіль</h2>
+      <div class="card">
+        <div class="t" id="profName">—</div>
+        <div class="d" id="profUser">—</div>
+      </div>
+      <span class="status ok"><span class="dot"></span>Ви зареєстровані та маєте повний доступ</span>
+
+      <h2 class="sec">Налаштування</h2>
+      <a class="card" id="profNotify">
+        <div class="t">🔔 Сповіщення <span class="arr" id="notifyState">→</span></div>
+        <div class="d" id="notifyDesc">Увімкнути push-сповіщення про новини.</div>
+      </a>
+      <a class="card" onclick="toggleTheme()">
+        <div class="t">🌓 Тема оформлення <span class="arr">→</span></div>
+        <div class="d">Перемкнути день / ніч.</div>
+      </a>
+      <button class="btn ghost" id="doLogout" style="margin-top:8px">Вийти з акаунту</button>
+    </section>
+  </div>
+
+  <!-- ── Нижня навігація ── -->
+  <nav class="tabbar">
+    <button class="active" data-go="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Головна</button>
+    <button data-go="materials"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v14H4zM4 9h16"/></svg>Матеріали</button>
+    <button data-go="ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v3a3 3 0 003 3v6a3 3 0 00-3 3v3H9v-3a3 3 0 00-3-3V9a3 3 0 003-3z"/></svg>AI-помічник</button>
+    <button data-go="news"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v14H4zM8 9h8M8 13h6"/></svg>Новини</button>
+    <button data-go="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Профіль</button>
+  </nav>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpXzFNgLhX79gF-db3JKZmedxh98C0ih4",
+    authDomain: "integrity-police-app.firebaseapp.com",
+    projectId: "integrity-police-app",
+    storageBucket: "integrity-police-app.firebasestorage.app",
+    messagingSenderId: "710211684160",
+    appId: "1:710211684160:web:d18e7d8ee3930be3539ca5"
+  };
+  const VAPID_KEY = "BJN7ykfX3QhbbuodEwQ3gl4J9qLadluU2kB8RkO7goGOfujOOlKhaWcfcKDAh6jo7O4SRUvO7ivpBJdOg8OlUWw";
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  // === Логін у форматі username → внутрішня псевдо-пошта (бо Firebase Auth хоче email) ===
+  // Користувач вводить логін; ми додаємо домен, щоб задовольнити Firebase, не вимагаючи реальної пошти.
+  const FAKE_DOMAIN = "@integrity-app.local";
+  const userToEmail = u => u.trim().toLowerCase() + FAKE_DOMAIN;
+
+  // ── Теми ──
+  const root=document.documentElement;
+  function applyTheme(t){root.setAttribute('data-theme',t);
+    document.querySelectorAll('#themeBtn,#themeBtnAuth').forEach(b=>b.textContent=t==='dark'?'☀️':'🌙');}
+  function detectTheme(){return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+  let theme = detectTheme(); applyTheme(theme);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',e=>{applyTheme(e.matches?'dark':'light');});
+  function toggleTheme(){theme=root.getAttribute('data-theme')==='dark'?'light':'dark';applyTheme(theme);}
+  document.getElementById('themeBtn').onclick=toggleTheme;
+  document.getElementById('themeBtnAuth').onclick=toggleTheme;
+
+  // ── Навігація ──
+  function go(tab){
+    document.querySelectorAll('.screen[data-tab]').forEach(s=>s.classList.toggle('active',s.dataset.tab===tab));
+    document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('active',b.dataset.go===tab));
+    window.scrollTo(0,0);
+  }
+  document.querySelectorAll('nav.tabbar button').forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+  // ── Перемикання форм входу/реєстрації ──
+  const authMsg=document.getElementById('authMsg'), regMsg=document.getElementById('regMsg');
+  document.getElementById('toRegister').onclick=()=>{document.getElementById('tabLogin').style.display='none';document.getElementById('tabRegister').style.display='block';};
+  document.getElementById('toLogin').onclick=()=>{document.getElementById('tabRegister').style.display='none';document.getElementById('tabLogin').style.display='block';};
+
+  // ── Реєстрація ──
+  document.getElementById('doRegister').onclick=async()=>{
+    const name=document.getElementById('regName').value.trim();
+    const user=document.getElementById('regUser').value.trim();
+    const pass=document.getElementById('regPass').value;
+    if(!name||!user||pass.length<6){regMsg.textContent='Заповніть усе; пароль від 6 символів.';return;}
+    regMsg.textContent='Реєструю...';
+    try{
+      const cred=await auth.createUserWithEmailAndPassword(userToEmail(user),pass);
+      await cred.user.updateProfile({displayName:name});
+      // запис у Firestore для обліку динаміки
+      await db.collection('users').doc(cred.user.uid).set({
+        name, login:user, createdAt:firebase.firestore.FieldValue.serverTimestamp(),
+        pushEnabled:false
+      });
+      regMsg.textContent='✓ Готово!';
+    }catch(e){
+      regMsg.textContent = e.code==='auth/email-already-in-use' ? 'Такий логін уже існує.' : 'Помилка: '+e.message;
+    }
+  };
+
+  // ── Вхід ──
+  document.getElementById('doLogin').onclick=async()=>{
+    const user=document.getElementById('loginUser').value.trim();
+    const pass=document.getElementById('loginPass').value;
+    if(!user||!pass){authMsg.textContent='Введіть логін і пароль.';return;}
+    authMsg.textContent='Вхід...';
+    try{ await auth.signInWithEmailAndPassword(userToEmail(user),pass); authMsg.textContent=''; }
+    catch(e){ authMsg.textContent = (e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'||e.code==='auth/user-not-found') ? 'Невірний логін або пароль.' : 'Помилка: '+e.message; }
+  };
+
+  // ── Вихід ──
+  document.getElementById('doLogout').onclick=()=>auth.signOut();
+
+  // ── Слухач стану авторизації: показує застосунок або екран входу ──
+  auth.onAuthStateChanged(u=>{
+    if(u){
+      document.getElementById('authScreen').style.display='none';
+      document.getElementById('appScreen').style.display='block';
+      const nm=u.displayName||'користувачу';
+      document.getElementById('helloName').textContent=nm;
+      document.getElementById('profName').textContent=nm;
+      document.getElementById('profUser').textContent='Логін: '+(u.email||'').replace(FAKE_DOMAIN,'');
+      go('home');
+      loadNews();
+      loadVideos();
+    }else{
+      document.getElementById('appScreen').style.display='none';
+      document.getElementById('authScreen').style.display='block';
+    }
+  });
+
+  // ── Новини з Firestore (адмін додає через admin.html) ──
+  const newsFallback=[
+    {tag:'Важливо',color:'#2e7bff',title:'Ласкаво просимо до застосунку',text:'Тут з\u2019являтимуться новини, які додає адміністратор.',date:'—'},
+  ];
+  const tagColors={'Важливо':'#2e7bff','Подія':'#2a8c46','Нагадування':'#e5b347','Інформація':'#8aa0c0'};
+  function newsCard(n){
+    const color=tagColors[n.tag]||'#2e7bff';
+    const date=n.date || (n.createdAt&&n.createdAt.toDate?n.createdAt.toDate().toLocaleDateString('uk-UA'):'');
+    return `<div class="card">
+      <div style="display:inline-block;font-family:'JetBrains Mono';font-size:9px;letter-spacing:.1em;
+        text-transform:uppercase;color:${color};border:1px solid ${color};padding:3px 9px;border-radius:999px;margin-bottom:10px">${n.tag||'Новина'}</div>
+      <div class="t" style="font-size:16px;display:block">${n.title||''}</div>
+      <div class="d" style="margin:4px 0 6px">${n.text||''}</div>
+      <div style="font-family:'JetBrains Mono';font-size:11px;color:var(--ink-soft)">${date}</div>
+    </div>`;
+  }
+  function renderNews(list){
+    const items=(list&&list.length)?list:newsFallback;
+    document.getElementById('newsList').innerHTML=items.map(newsCard).join('');
+  }
+  function loadNews(){
+    renderNews(null); // показуємо заглушку, поки вантажиться
+    db.collection('news').where('published','==',true).orderBy('createdAt','desc').limit(30).get()
+      .then(snap=>{const arr=[];snap.forEach(d=>arr.push(d.data()));renderNews(arr);})
+      .catch(e=>{console.warn('Новини:',e.message);renderNews(null);});
+  }
+
+  // ── Відео з Firestore (адмін додає; якщо порожньо — лишаються статичні картки в розмітці) ──
+  function loadVideos(){
+    db.collection('videos').where('published','==',true).orderBy('createdAt','desc').limit(30).get()
+      .then(snap=>{
+        if(snap.empty) return;
+        const box=document.getElementById('videoList'); if(!box) return;
+        let html='';
+        snap.forEach(d=>{const v=d.data();
+          html+=`<a class="card online" href="${v.url||'#'}" target="_blank" rel="noopener">
+            <div class="ic">🎬</div>
+            <div class="t" style="font-size:16px">${v.title||'Відео'} <span class="arr">→</span></div>
+            <div class="d">${v.description||''}</div></a>`;
+        });
+        box.innerHTML=html;
+      }).catch(e=>console.warn('Відео:',e.message));
+  }
+
+  // ── Сповіщення (push) ──
+  let messaging=null;
+  try{ messaging=firebase.messaging(); }catch(e){}
+  const notifyCard=document.getElementById('profNotify');
+  const notifyDesc=document.getElementById('notifyDesc');
+  const notifyState=document.getElementById('notifyState');
+  function refreshNotify(){
+    if(('Notification' in window)&&Notification.permission==='granted'){
+      notifyState.textContent='✓'; notifyDesc.textContent='Сповіщення увімкнено.';
+    }
+  }
+  refreshNotify();
+  notifyCard.onclick=async()=>{
+    if(!('Notification' in window)){notifyDesc.textContent='Відкрийте з ярлика на головному екрані.';return;}
+    if(!messaging){notifyDesc.textContent='Firebase Messaging недоступний.';return;}
+    try{
+      const perm=await Notification.requestPermission();
+      if(perm!=='granted'){notifyDesc.textContent='Дозвіл не надано.';return;}
+      const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js');
+      await navigator.serviceWorker.ready;
+      const token=await messaging.getToken({vapidKey:VAPID_KEY,serviceWorkerRegistration:reg});
+      if(token){
+        notifyState.textContent='✓'; notifyDesc.textContent='Сповіщення увімкнено.';
+        // фіксуємо в обліку
+        const u=auth.currentUser;
+        if(u) await db.collection('users').doc(u.uid).update({pushEnabled:true, pushToken:token});
+      }else{ notifyDesc.textContent='Не вдалося отримати токен.'; }
+    }catch(e){ notifyDesc.textContent='Помилка: '+e.message; }
+  };
+
+  // офлайн service worker (єдиний)
+  if('serviceWorker' in navigator){
+    addEventListener('load',()=>navigator.serviceWorker.register('firebase-messaging-sw.js').catch(()=>{}));
+  }
+  window.go=go; window.toggleTheme=toggleTheme;
+</script>
+</body>
+</html>

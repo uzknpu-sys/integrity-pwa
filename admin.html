@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Адмін · Доброчесна Поліція</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Sora:wght@700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a1628;--surface:#0f1f38;--surface-2:#14233f;--ink:#eaf1ff;--ink-soft:#8aa0c0;
+    --line:rgba(255,255,255,.10);--brand:#2e7bff;--brand-2:#22d3d8;--gold:#e5b347;
+    --grad:linear-gradient(135deg,#2e7bff,#22d3d8);--ok:#2a8c46;--err:#c0432c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:'Manrope',sans-serif;
+    min-height:100vh;padding:24px 16px 60px}
+  .wrap{max-width:680px;margin:0 auto}
+  h1{font-family:'Sora';font-size:24px;font-weight:800;margin-bottom:4px}
+  .sub{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brand-2);margin-bottom:24px}
+  h2{font-family:'JetBrains Mono';font-size:11px;font-weight:600;text-transform:uppercase;
+    letter-spacing:.16em;color:var(--ink-soft);margin:28px 0 12px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+  input,textarea,select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:11px;
+    background:var(--surface-2);color:var(--ink);font-family:'Manrope';font-size:15px;margin-bottom:10px}
+  textarea{min-height:80px;resize:vertical}
+  .btn{display:block;width:100%;padding:13px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Sora';font-size:15px;font-weight:700;background:var(--grad);color:#fff}
+  .btn.ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+  .msg{font-family:'JetBrains Mono';font-size:12px;margin-top:8px;min-height:16px}
+  .row{display:flex;gap:10px}.row>*{flex:1}
+  .stat{display:flex;gap:14px;margin-bottom:18px}
+  .stat .box{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .stat .n{font-family:'Sora';font-size:28px;font-weight:800;color:var(--brand-2)}
+  .stat .l{font-size:11px;color:var(--ink-soft);margin-top:2px}
+  .uitem{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .uitem:last-child{border:none}
+  .badge{font-family:'JetBrains Mono';font-size:10px;padding:2px 8px;border-radius:999px}
+  .badge.on{background:rgba(42,140,70,.2);color:#5fd17e}.badge.off{background:rgba(255,255,255,.06);color:var(--ink-soft)}
+  #gate{text-align:center;padding:50px 20px}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Адмін-панель</h1>
+  <div class="sub">Доброчесна Поліція · УЗК</div>
+
+  <!-- Вхід для адміна -->
+  <div id="gate">
+    <div class="card">
+      <h2 style="margin-top:0">Вхід адміністратора</h2>
+      <input id="admLogin" placeholder="Логін">
+      <input id="admPass" type="password" placeholder="Пароль">
+      <button class="btn" id="admEnter">Увійти</button>
+      <div class="msg" id="admMsg"></div>
+    </div>
+    <p style="font-size:12px;color:var(--ink-soft);line-height:1.5">Доступ лише для облікового запису адміністратора. Звичайні користувачі сюди не входять.</p>
+  </div>
+
+  <!-- Панель -->
+  <div id="panel" class="hide">
+    <div class="stat">
+      <div class="box"><div class="n" id="cUsers">—</div><div class="l">Користувачів</div></div>
+      <div class="box"><div class="n" id="cPush">—</div><div class="l">З push</div></div>
+      <div class="box"><div class="n" id="cNews">—</div><div class="l">Новин</div></div>
+    </div>
+    <button class="btn ghost" id="admLogout" style="margin-bottom:20px">Вийти</button>
+
+    <h2>Додати новину</h2>
+    <div class="card">
+      <input id="nTitle" placeholder="Заголовок">
+      <textarea id="nText" placeholder="Текст новини"></textarea>
+      <select id="nTag">
+        <option>Важливо</option><option>Подія</option><option>Нагадування</option><option>Інформація</option>
+      </select>
+      <button class="btn" id="addNews">Опублікувати новину</button>
+      <div class="msg" id="nMsg"></div>
+    </div>
+
+    <h2>Додати відео</h2>
+    <div class="card">
+      <input id="vTitle" placeholder="Назва відео">
+      <input id="vUrl" placeholder="Посилання (YouTube)">
+      <textarea id="vDesc" placeholder="Короткий опис"></textarea>
+      <button class="btn" id="addVideo">Опублікувати відео</button>
+      <div class="msg" id="vMsg"></div>
+    </div>
+
+    <h2>Користувачі</h2>
+    <div class="card" id="usersBox"><div style="color:var(--ink-soft);font-size:14px">Завантаження...</div></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig={
+    apiKey:"AIzaSyDpXzFNgLhX79gF-db3JKZmedxh98C0ih4",
+    authDomain:"integrity-police-app.firebaseapp.com",
+    projectId:"integrity-police-app",
+    storageBucket:"integrity-police-app.firebasestorage.app",
+    messagingSenderId:"710211684160",
+    appId:"1:710211684160:web:d18e7d8ee3930be3539ca5"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth=firebase.auth(), db=firebase.firestore();
+  const FAKE_DOMAIN="@integrity-app.local";
+
+  // ⚙️ ЛОГІН АДМІНА: впишіть сюди логін, який матиме права адміна.
+  // Цей користувач має бути зареєстрований у застосунку звичайним шляхом.
+  const ADMIN_LOGIN="admin";
+
+  const $=id=>document.getElementById(id);
+  $('admEnter').onclick=async()=>{
+    const u=$('admLogin').value.trim(), p=$('admPass').value;
+    if(!u||!p){$('admMsg').textContent='Введіть логін і пароль.';return;}
+    $('admMsg').textContent='Вхід...';
+    try{ await auth.signInWithEmailAndPassword(u.toLowerCase()+FAKE_DOMAIN,p); }
+    catch(e){ $('admMsg').textContent='Невірний логін або пароль.'; }
+  };
+  $('admLogout').onclick=()=>auth.signOut();
+
+  auth.onAuthStateChanged(u=>{
+    const login=u?(u.email||'').replace(FAKE_DOMAIN,''):'';
+    if(u && login===ADMIN_LOGIN){
+      $('gate').classList.add('hide'); $('panel').classList.remove('hide');
+      loadStats(); loadUsers();
+    }else{
+      $('panel').classList.add('hide'); $('gate').classList.remove('hide');
+      if(u && login!==ADMIN_LOGIN){ $('admMsg').textContent='Цей акаунт не має прав адміністратора.'; auth.signOut(); }
+    }
+  });
+
+  function loadStats(){
+    db.collection('users').get().then(s=>{
+      $('cUsers').textContent=s.size;
+      let push=0; s.forEach(d=>{if(d.data().pushEnabled)push++;});
+      $('cPush').textContent=push;
+    }).catch(()=>{});
+    db.collection('news').get().then(s=>$('cNews').textContent=s.size).catch(()=>{});
+  }
+
+  function loadUsers(){
+    db.collection('users').orderBy('createdAt','desc').limit(100).get().then(s=>{
+      let html=''; s.forEach(d=>{const u=d.data();
+        html+=`<div class="uitem"><span>${u.name||'—'} <span style="color:var(--ink-soft)">@${u.login||''}</span></span>
+          <span class="badge ${u.pushEnabled?'on':'off'}">${u.pushEnabled?'push on':'push off'}</span></div>`;
+      });
+      $('usersBox').innerHTML=html||'<div style="color:var(--ink-soft)">Поки немає користувачів.</div>';
+    }).catch(e=>{$('usersBox').innerHTML='<div style="color:var(--err)">Помилка: '+e.message+'</div>';});
+  }
+
+  $('addNews').onclick=async()=>{
+    const title=$('nTitle').value.trim(), text=$('nText').value.trim(), tag=$('nTag').value;
+    if(!title||!text){$('nMsg').textContent='Заповніть заголовок і текст.';return;}
+    $('nMsg').textContent='Публікую...';
+    try{
+      await db.collection('news').add({title,text,tag,published:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      $('nMsg').textContent='✓ Новину опубліковано'; $('nTitle').value='';$('nText').value='';
+      loadStats();
+    }catch(e){$('nMsg').textContent='Помилка: '+e.message;}
+  };
+
+  $('addVideo').onclick=async()=>{
+    const title=$('vTitle').value.trim(), url=$('vUrl').value.trim(), description=$('vDesc').value.trim();
+    if(!title||!url){$('vMsg').textContent='Заповніть назву і посилання.';return;}
+    $('vMsg').textContent='Публікую...';
+    try{
+      await db.collection('videos').add({title,url,description,published:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      $('vMsg').textContent='✓ Відео опубліковано'; $('vTitle').value='';$('vUrl').value='';$('vDesc').value='';
+    }catch(e){$('vMsg').textContent='Помилка: '+e.message;}
+  };
+</script>
+</body>
+</html>
