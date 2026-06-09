@@ -31,7 +31,7 @@
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{background:var(--bg);color:var(--ink);font-family:'Manrope',sans-serif;
-    transition:background .35s,color .35s}
+    transition:background .35s,color .35s;overflow-x:hidden;width:100%;max-width:100%;position:relative}
   body{min-height:100dvh;overflow-x:hidden}
 
   /* ── Декоративний фон з «нейромережею» ── */
@@ -121,8 +121,8 @@
   .gate p{color:var(--ink-soft);font-size:14px;line-height:1.5;margin-bottom:22px}
 
   /* ── AI обличчя (декор) ── */
-  .ai-face{position:absolute;right:-30px;top:-20px;width:180px;height:180px;opacity:.22;
-    pointer-events:none}
+  .ai-face{position:absolute;right:0;top:-20px;width:160px;height:160px;opacity:.22;
+    pointer-events:none;max-width:45%}
   .msg{font-family:'JetBrains Mono';font-size:12px;color:var(--ink-soft);text-align:center;
     margin-top:10px;min-height:18px}
   .soon{display:inline-block;font-family:'JetBrains Mono';font-size:10px;letter-spacing:.1em;
@@ -209,18 +209,18 @@
         <div class="t">Довідник стандартів <span class="arr">→</span></div>
         <div class="d">11 тем, 40 ситуаційних задач, тести й дилеми. Працює офлайн.</div>
       </a>
-      <a class="card online" href="https://www.youtube.com/playlist?list=PLLdjRuX7U6DPywID-s1Az_RljtZTW-99J" target="_blank" rel="noopener">
+      <a class="card online" onclick="openModal('https://www.youtube.com/embed/videoseries?list=PLLdjRuX7U6DPywID-s1Az_RljtZTW-99J','Відео')" style="cursor:pointer">
         <div class="ic">🎬</div>
         <div class="t">Відео <span class="arr">→</span></div>
-        <div class="d">Плейлист відеороз'яснень на YouTube.</div>
+        <div class="d">Плейлист відеороз'яснень.</div>
       </a>
       <div id="videoList"></div>
-      <a class="card online" href="https://www.integrity-police.pp.ua/Integrity-Quest" target="_blank" rel="noopener">
+      <a class="card online" onclick="openModal('https://www.integrity-police.pp.ua/Integrity-Quest','Етичні дилеми')" style="cursor:pointer">
         <div class="ic">🎮</div>
         <div class="t">Етичні дилеми — Integrity Quest <span class="arr">→</span></div>
         <div class="d">Інтерактивний тренажер етичних ситуацій.</div>
       </a>
-      <a class="card online" href="https://www.integrity-police.pp.ua/interactiv" target="_blank" rel="noopener">
+      <a class="card online" onclick="openModal('https://www.integrity-police.pp.ua/interactiv','Розбудова доброчесності')" style="cursor:pointer">
         <div class="ic">🏗️</div>
         <div class="t">Курс «Розбудова доброчесності» <span class="arr">→</span></div>
         <div class="d">Інтерактивний навчальний курс.</div>
@@ -279,19 +279,36 @@
   </nav>
 </div>
 
+<!-- Модальне вікно для відео / ресурсів поверх застосунку -->
+<div id="modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(5,11,22,.92);backdrop-filter:blur(4px)">
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;gap:12px;padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;
+      background:var(--surface);border-bottom:1px solid var(--line)">
+      <span id="modalTitle" style="flex:1;font-family:'Sora';font-weight:700;font-size:16px;color:var(--ink);
+        white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Перегляд</span>
+      <button onclick="closeModal()" style="display:flex;align-items:center;gap:7px;border:none;cursor:pointer;
+        background:var(--grad);color:#fff;font-family:'Sora';font-weight:700;font-size:14px;
+        padding:10px 16px;border-radius:11px">✕ Закрити</button>
+    </div>
+    <iframe id="modalFrame" style="flex:1;width:100%;border:none;background:#000"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+      allowfullscreen></iframe>
+  </div>
+</div>
+
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAk074zS6Me9eW_v-Cz40dCVknFpzWxx7I",
-  authDomain: "integrity-police-app-e4b0a.firebaseapp.com",
-  projectId: "integrity-police-app-e4b0a",
-  storageBucket: "integrity-police-app-e4b0a.firebasestorage.app",
-  messagingSenderId: "963382217687",
-  appId: "1:963382217687:web:7583a0b6cc4cfb0c1bd992"
+  const firebaseConfig = {
+	  apiKey: "AIzaSyAk074zS6Me9eW_v-Cz40dCVknFpzWxx7I",
+	  authDomain: "integrity-police-app-e4b0a.firebaseapp.com",
+	  projectId: "integrity-police-app-e4b0a",
+	  storageBucket: "integrity-police-app-e4b0a.firebasestorage.app",
+	  messagingSenderId: "963382217687",
+	  appId: "1:963382217687:web:7583a0b6cc4cfb0c1bd992"
   };
   const VAPID_KEY = "BAfk0Cn_cYuRnpwGY3dg3t2F6SuFkH0hry__2aAhPK9KZd9d6PCLplRzIBHVx6k1OtbQHDjnwY2gRc6SOcDpsXE";
   firebase.initializeApp(firebaseConfig);
@@ -414,7 +431,8 @@ const firebaseConfig = {
         const box=document.getElementById('videoList'); if(!box) return;
         let html='';
         snap.forEach(d=>{const v=d.data();
-          html+=`<a class="card online" href="${v.url||'#'}" target="_blank" rel="noopener">
+          const emb=(v.url||'').replace('watch?v=','embed/');
+          html+=`<a class="card online" onclick="openModal('${emb}','${(v.title||'Відео').replace(/'/g,'')}')" style="cursor:pointer">
             <div class="ic">🎬</div>
             <div class="t" style="font-size:16px">${v.title||'Відео'} <span class="arr">→</span></div>
             <div class="d">${v.description||''}</div></a>`;
@@ -457,6 +475,20 @@ const firebaseConfig = {
   if('serviceWorker' in navigator){
     addEventListener('load',()=>navigator.serviceWorker.register('firebase-messaging-sw.js').catch(()=>{}));
   }
+  // ── Модальне вікно (відео/ресурси поверх застосунку) ──
+  function openModal(url,title){
+    document.getElementById('modalTitle').textContent=title||'Перегляд';
+    document.getElementById('modalFrame').src=url;
+    document.getElementById('modal').style.display='block';
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    document.getElementById('modal').style.display='none';
+    document.getElementById('modalFrame').src='';  // зупиняє відео
+    document.body.style.overflow='';
+  }
+  window.openModal=openModal; window.closeModal=closeModal;
+
   window.go=go; window.toggleTheme=toggleTheme;
 </script>
 </body>

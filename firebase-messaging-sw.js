@@ -17,7 +17,7 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 /* ===== Офлайн-кеш (об'єднано з sw.js, щоб був один service worker) ===== */
-const CACHE = 'integrity-v8';
+const CACHE = 'integrity-v10';
 const ASSETS = [
   './','./index.html','./guide.html','./manifest.webmanifest',
   './icons/icon-192.png','./icons/icon-512.png',
