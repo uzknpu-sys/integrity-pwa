@@ -6,12 +6,12 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
 firebase.initializeApp({
-  apiKey: "AIzaSyDpXzFNgLhX79gF-db3JKZmedxh98C0ih4",
-  authDomain: "integrity-police-app.firebaseapp.com",
-  projectId: "integrity-police-app",
-  storageBucket: "integrity-police-app.firebasestorage.app",
-  messagingSenderId: "710211684160",
-  appId: "1:710211684160:web:d18e7d8ee3930be3539ca5"
+  apiKey: "AIzaSyAk074zS6Me9eW_v-Cz40dCVknFpzWxx7I",
+  authDomain: "integrity-police-app-e4b0a.firebaseapp.com",
+  projectId: "integrity-police-app-e4b0a",
+  storageBucket: "integrity-police-app-e4b0a.firebasestorage.app",
+  messagingSenderId: "963382217687",
+  appId: "1:963382217687:web:7583a0b6cc4cfb0c1bd992"
 });
 
 const messaging = firebase.messaging();
